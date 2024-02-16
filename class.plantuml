@@ -1,0 +1,62 @@
+@startuml
+
+' package "Application" {
+'     class ApplicationCode
+'     class MyQueueConsumer
+'     entity MyQueueMessage
+' }
+
+
+package "Queueing" {
+    interface IQueueConsumer
+    class QueueProducer
+    interface IQueueMessage
+    class QueueConsumerHandler
+    class QueueConsumerRegistratorService
+    class QueueChannelProvider
+    class ChannelProvider
+    class ConnectionProvider
+}
+
+
+
+package "RabbitMQ.Client" {
+    class ConnectionFactory
+    interface IAsyncConnectionFactory #orange
+    interface IModel #orange
+    interface IConnection #orange
+}
+
+    ' MyQueueMessage ..|> IQueueMessage
+    ' MyQueueConsumer ..|> IQueueConsumer
+    ' MyQueueConsumer ..> MyQueueMessage
+    ' ApplicationCode ..* QueueProducer
+
+    ' QueueProducer --> MyQueueMessage
+    ' IQueueConsumer --> MyQueueMessage
+    ' QueueConsumerHandler ..> MyQueueConsumer
+
+
+    QueueProducer ..* QueueChannelProvider
+    QueueChannelProvider ..* ChannelProvider
+    ChannelProvider ..* ConnectionProvider
+    ConnectionProvider ..* IAsyncConnectionFactory
+
+    ConnectionFactory ..|> IAsyncConnectionFactory
+
+    QueueConsumerRegistratorService --> QueueConsumerHandler
+    QueueConsumerHandler --> IQueueConsumer
+    QueueProducer ..> IQueueMessage
+    IQueueConsumer ..> IQueueMessage
+    QueueChannelProvider ..> IQueueMessage
+    QueueConsumerHandler ..* QueueChannelProvider
+    IAsyncConnectionFactory ..> IConnection
+    IAsyncConnectionFactory : IConnection CreateConnection()
+    IConnection : IModel CreateModel()
+    IConnection ..> IModel
+
+    QueueConsumerHandler ..> IModel
+    QueueProducer ..> IModel
+    ChannelProvider ..> IModel
+
+@enduml

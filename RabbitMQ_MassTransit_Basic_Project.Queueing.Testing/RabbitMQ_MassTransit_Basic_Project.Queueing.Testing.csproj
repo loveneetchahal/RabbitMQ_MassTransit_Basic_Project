@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="RabbitMQ.Client" Version="6.5.0" />
+		<PackageReference Include="Moq" Version="4.18.4" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\RabbitMQ_MassTransit_Basic_Project.Queueing\RabbitMQ_MassTransit_Basic_Project.Queueing.csproj" />
+	</ItemGroup>
+</Project>

@@ -1,0 +1,53 @@
+@startuml
+
+queue ConsumingChannel
+participant Handler
+participant QueueConsumer
+queue ProducingChannel
+
+ConsumingChannel -> Handler: Incoming message
+activate Handler
+Handler -> ProducingChannel: Create channel
+activate ProducingChannel
+Handler -> ProducingChannel: Strart transaction
+
+
+
+Handler -> QueueConsumer: Incoming message
+activate QueueConsumer
+QueueConsumer -> ProducingChannel: Produce message(s)
+
+QueueConsumer -> Handler
+deactivate QueueConsumer
+
+Handler -> ProducingChannel: Commit
+deactivate ProducingChannel
+Handler -> ConsumingChannel: Ack incoming message
+deactivate Handler
+
+== Failure ==
+
+ConsumingChannel -> Handler: Incoming message
+activate Handler
+Handler -> ProducingChannel: Create channel
+activate ProducingChannel
+Handler -> ProducingChannel: Strart transaction
+
+
+
+Handler -> QueueConsumer: Incoming message
+activate QueueConsumer
+QueueConsumer -> ProducingChannel: Produce message(s)
+
+QueueConsumer -> Handler: <font color=red>Exception
+deactivate QueueConsumer
+
+Handler -> ProducingChannel: <font color=red>Rollback
+deactivate ProducingChannel
+Handler -> ConsumingChannel: <font color=red>Reject incoming message
+deactivate Handler
+
+
+
+
+@enduml
